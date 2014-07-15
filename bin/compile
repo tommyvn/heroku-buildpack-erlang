@@ -48,7 +48,7 @@ cd $build
 
 if [ ! -f "erlang.mk" ]; then
   echo "-----> Installing erlang.mk from https://github.com/extend/erlang.mk"
-  wget https://raw.githubusercontent.com/extend/erlang.mk/master/erlang.mk
+  curl -o erlang.mk https://raw.githubusercontent.com/extend/erlang.mk/master/erlang.mk
 fi
 
 echo "-----> Building with erlang.mk"
