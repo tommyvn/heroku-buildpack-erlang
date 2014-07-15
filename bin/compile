@@ -46,22 +46,23 @@ export PATH
 
 cd $build
 
-if [ ! -e "rebar" ]; then
-  echo "-----> Installing Rebar from buildpack"
-  cp ${bpdir}/opt/rebar ./
+if [ ! -f "erlang.mk" ]; then
+  echo "-----> Installing erlang.mk from https://github.com/extend/erlang.mk"
+  wget https://raw.githubusercontent.com/extend/erlang.mk/master/erlang.mk
 fi
 
-echo "-----> Building with Rebar"
+echo "-----> Building with erlang.mk"
 unset GIT_DIR
-./rebar get-deps compile 2>&1 | sed -u 's/^/       /'
+make 2>&1 | sed -u 's/^/       /'
 if [ ${PIPESTATUS[0]} -ne 0 ]; then
   echo "-----> Build failed"
   exit 1
 fi
 
-if [ -f ${bpdir}/opt/otp.sh ]; then
-  mkdir -p ${PROFILE}
-  cp ${bpdir}/opt/otp.sh ${PROFILE}
+if [ ! -f ./Procfile ]; then
+  APP=$(ls ./_rel/)
+  echo "-----> No Procfile, using web: ./_rel/$APP/bin/$APP"
+  echo "web: ./_rel/$APP/bin/$APP" > Procfile
 fi
 
 echo "-----> Build succeeded"
