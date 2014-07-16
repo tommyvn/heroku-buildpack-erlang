@@ -71,6 +71,8 @@ unset GIT_DIR
 PATH=$PATH:${cache}/bin/ make 2>&1 | sed -u 's/^/       /'
 if [ ${PIPESTATUS[0]} -ne 0 ]; then
   echo "-----> Build failed"
+  head -n 1 relx
+  which escript
   exit 1
 fi
 
