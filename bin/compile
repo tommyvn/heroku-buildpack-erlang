@@ -59,7 +59,7 @@ if [ ${PIPESTATUS[0]} -ne 0 ]; then
 fi
 cd $WORK_DIR
 
-PATH=/app/otp/bin:$PATH
+PATH=$ERLROOT/bin:$PATH
 export PATH
 
 cd $build
@@ -89,7 +89,7 @@ unset GIT_DIR
 PATH=$PATH:${cache}/bin/ make 2>&1 | sed -u 's/^/       /'
 if [ ${PIPESTATUS[0]} -ne 0 ]; then
   echo "-----> Build failed"
-  ls -l /app/otp/
+  ls -l $ERLROOT
   exit 1
 fi
 
