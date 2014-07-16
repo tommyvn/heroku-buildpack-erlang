@@ -85,6 +85,8 @@ if [ ! -e ${cache}/bin/wget ] ; then
 fi
 
 echo "-----> Building with erlang.mk"
+
+export OTPROOT=${ERLROOT}
 unset GIT_DIR
 PATH=$PATH:${cache}/bin/ make 2>&1 | sed -u 's/^/       /'
 if [ ${PIPESTATUS[0]} -ne 0 ]; then
