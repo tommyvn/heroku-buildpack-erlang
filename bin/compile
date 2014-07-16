@@ -45,7 +45,7 @@ export ERL_TOP=`pwd`
 ./configure --prefix=${ERLROOT} --srcdir=/tmp/otp_build/erts
 make
 echo "-------> Installing Erlang/OTP $ver"
-make install
+make DESTDIR=/tmp/erlang-build install
 cd $WORK_DIR
 
 PATH=/app/otp/bin:$PATH
