@@ -35,11 +35,15 @@ echo "-----> Using Erlang/OTP $ver"
 )
 
 echo "-------> Unpacking Erlang/OTP $ver"
+WORK_DIR=$(pwd)
 mkdir -p ${ERLROOT}
 mkdir /tmp/otp
 tar zxf ${cache}/${tarball} -C /tmp/otp --strip-components=2
 echo "-------> Installing Erlang/OTP $ver"
-/tmp/otp/Install -minimal /app/otp
+cd /tmp/otp
+./configure --prefix=${ERLROOT}
+make install
+cd $WORK_DIR
 
 PATH=/app/otp/bin:$PATH
 export PATH
