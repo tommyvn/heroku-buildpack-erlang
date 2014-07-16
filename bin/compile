@@ -58,11 +58,12 @@ fi
 if [ ! -e ${cache}/bin/wget ] ; then
   echo "-----> wget not available, building to cache"
   curl http://ftp.gnu.org/gnu/wget/wget-1.15.tar.gz | tar -xzf - -C /tmp/
-  PWD=$(pwd)
+  WORK_DIR=$(pwd)
   cd /tmp/wget-1.15/
   ./configure --with-open-ssl --with-ssl=openssl | sed -u 's/^/       /'
   make | sed -u 's/^/       /'
   mv ./src/wget ${cache}/bin/wget
+  cd $WORK_DIR
 fi
 
 echo "-----> Building with erlang.mk"
