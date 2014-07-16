@@ -35,15 +35,11 @@ echo "-----> Using Erlang/OTP $ver"
 )
 
 echo "-------> Unpacking Erlang/OTP $ver"
-WORK_DIR=$(pwd)
 mkdir -p ${ERLROOT}
-mkdir /tmp/otp
-tar zxf ${cache}/${tarball} -C /tmp/otp --strip-components=2
+tar zxf ${cache}/${tarball} -C ${ERLROOT} --strip-components=2
 echo "-------> Installing Erlang/OTP $ver"
-cd /tmp/otp
-./configure --prefix=${ERLROOT}
-make install
-cd $WORK_DIR
+ln -s ${ERLROOT} /app/otp
+${ERLROOT}/Install -minimal /app/otp
 
 PATH=/app/otp/bin:$PATH
 export PATH
@@ -76,6 +72,7 @@ PATH=$PATH:${cache}/bin/ make 2>&1 | sed -u 's/^/       /'
 if [ ${PIPESTATUS[0]} -ne 0 ]; then
   echo "-----> Build failed"
   ls -l /app/otp/lib/
+  ls -l /app/otp/lib/snmp-4.25.0.1/
   exit 1
 fi
 
