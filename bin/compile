@@ -36,17 +36,23 @@ echo "-----> Using Erlang/OTP $ver"
 
 echo "-------> Unpacking Erlang/OTP $ver"
 mkdir -p ${ERLROOT}
-WORK_DIR=$(pwd)
-mkdir /tmp/otp_build
-cd /tmp/otp_build
-tar zxf ${cache}/${tarball} --strip-components=1
-echo "-------> Building Erlang/OTP $ver"
-export ERL_TOP=`pwd`
-./configure --prefix=${ERLROOT}
-make
+if [ ! -d ${cache}/otp_release_${ver} ] ; then
+  WORK_DIR=$(pwd)
+  mkdir /tmp/otp_build
+  cd /tmp/otp_build
+  tar zxf ${cache}/${tarball} --strip-components=1
+  echo "-------> Building Erlang/OTP $ver"
+  #export ERL_TOP=`pwd`
+  ./configure
+  make 2>&1 | sed -u 's/^/       /'
+  make RELEASE_ROOT=${ERLROOT} release 2>&1 | sed -u 's/^/       /'
+  cp -a ${ERLROOT} ${cache}/otp_release_${ver}
+  cd $WORK_DIR
+else
+  cp -a ${cache}/otp_release_${ver} ${ERLROOT}
+fi
 echo "-------> Installing Erlang/OTP $ver"
-make DESTDIR=${ERLROOT} install
-cd $WORK_DIR
+${ERLROOT}/Install -minimal ${ERLROOT} 2>&1 | sed -u 's/^/       /'
 
 PATH=/app/otp/bin:$PATH
 export PATH
