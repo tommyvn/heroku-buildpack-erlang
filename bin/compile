@@ -42,10 +42,10 @@ cd /tmp/otp_build
 tar zxf ${cache}/${tarball} --strip-components=1
 echo "-------> Building Erlang/OTP $ver"
 export ERL_TOP=`pwd`
-./configure --prefix=${ERLROOT} --srcdir=/tmp/otp_build/erts
+./configure --prefix=${ERLROOT}
 make
 echo "-------> Installing Erlang/OTP $ver"
-make DESTDIR=/tmp/erlang-build install
+make DESTDIR=${ERLROOT} install
 cd $WORK_DIR
 
 PATH=/app/otp/bin:$PATH
