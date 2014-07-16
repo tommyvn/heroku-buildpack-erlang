@@ -51,9 +51,23 @@ if [ ! -f "erlang.mk" ]; then
   curl -o erlang.mk https://raw.githubusercontent.com/extend/erlang.mk/master/erlang.mk
 fi
 
+if [ ! -d ${cache}/bin/ ] ; then
+  mkdir ${cache}/bin
+fi
+
+if [ ! -e ${cache}/bin/wget ] ; then
+  echo "-----> wget not available, building to cache"
+  curl http://ftp.gnu.org/gnu/wget/wget-1.15.tar.gz | tar -xfz - -C /tmp/
+  PWD=$(pwd)
+  cd /tmp/wget-1.15/
+  ./configure --with-open-ssl --with-ssl=openssl | sed -u 's/^/       /'
+  make | sed -u 's/^/       /'
+  mv ./src/wget ${cache}/bin/wget
+fi
+
 echo "-----> Building with erlang.mk"
 unset GIT_DIR
-make 2>&1 | sed -u 's/^/       /'
+PATH=$PATH:${cache}/bin/ make 2>&1 | sed -u 's/^/       /'
 if [ ${PIPESTATUS[0]} -ne 0 ]; then
   echo "-----> Build failed"
   exit 1
