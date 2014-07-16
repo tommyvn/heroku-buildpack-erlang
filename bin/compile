@@ -36,7 +36,7 @@ echo "-----> Using Erlang/OTP $ver"
 
 echo "-------> Unpacking Erlang/OTP $ver"
 mkdir -p ${ERLROOT}
-tar -zxf ${cache}/${tarball} -C ${ERLROOT} --strip-components=2
+tar zxf ${cache}/${tarball} -C ${ERLROOT} --strip-components=2
 echo "-------> Installing Erlang/OTP $ver"
 ln -s ${ERLROOT} /app/otp
 ${ERLROOT}/Install -minimal /app/otp
@@ -57,7 +57,7 @@ fi
 
 if [ ! -e ${cache}/bin/wget ] ; then
   echo "-----> wget not available, building to cache"
-  curl http://ftp.gnu.org/gnu/wget/wget-1.15.tar.gz | tar -xfz - -C /tmp/
+  curl http://ftp.gnu.org/gnu/wget/wget-1.15.tar.gz | tar -xzf - -C /tmp/
   PWD=$(pwd)
   cd /tmp/wget-1.15/
   ./configure --with-open-ssl --with-ssl=openssl | sed -u 's/^/       /'
