@@ -39,7 +39,7 @@ mkdir -p ${ERLROOT}
 WORK_DIR=$(pwd)
 mkdir /tmp/otp_build
 cd /tmp/otp_build
-tar zxf ${cache}/${tarball} --strip-components=2
+tar zxf ${cache}/${tarball} --strip-components=1
 echo "-------> Building Erlang/OTP $ver"
 export ERL_TOP=`pwd`
 ./configure --prefix=${ERLROOT} --srcdir=/tmp/otp_build/erts
