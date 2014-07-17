@@ -15,62 +15,27 @@ if [ -f ${build}/.preferred_otp_version ]; then
     OTP_VERSION=$(cat ${build}/.preferred_otp_version)
 fi
 ver=${OTP_VERSION:=${DEFAULT_OTP_VERSION}}
-tarball=otp_src_${ver}.tar.gz
-OTP_TARBALL_URL="http://www.erlang.org/download/${tarball}"
+
 ERLROOT=${build}/otp
 PROFILE=${HOME}/.profile.d
 
-echo "-----> Using Erlang/OTP $ver"
-
-(
-    set -e
-
-    # Already cached?
-    test -f ${cache}/${tarball} && exit
-
-    rm -rf ${cache}/* # be sure not to build up cruft
-    cd ${cache}
-    echo "-------> Fetching Erlang/OTP $ver"
-    curl -sO ${OTP_TARBALL_URL} || exit 1
-)
-
-echo "-------> Unpacking Erlang/OTP $ver"
-WORK_DIR=$(pwd)
-mkdir -p ${ERLROOT}
-if [ ! -d ${cache}/otp_release_${ver} ] ; then
-  mkdir /tmp/otp_build
-  cd /tmp/otp_build
-  tar zxf ${cache}/${tarball} --strip-components=1
-  echo "-------> Building Erlang/OTP $ver"
-  #export ERL_TOP=`pwd`
-  ./configure 2>&1 | sed -u 's/^/       /'
-  make 2>&1 | sed -u 's/^/       /'
-  make RELEASE_ROOT=${ERLROOT} release 2>&1 | sed -u 's/^/       /'
-  cp -a ${ERLROOT} ${cache}/otp_release_${ver}
-else
-  cp -a ${cache}/otp_release_${ver} ${ERLROOT}
+if [ ! -d ${cache}/bin/ ] ; then
+  mkdir ${cache}/bin
 fi
-echo "-------> Installing Erlang/OTP $ver"
-cd ${ERLROOT}
-./Install -minimal ${ERLROOT} 2>&1 | sed -u 's/^/       /'
-if [ ${PIPESTATUS[0]} -ne 0 ]; then
-  echo "-----> Build failed"
-  exit 1
-fi
-cd $WORK_DIR
 
-PATH=$ERLROOT/bin:$PATH
+PATH=$ERLROOT/bin:${cache}/bin:$PATH
 export PATH
+
+echo "-----> Using Erlang/OTP $ver"
+curl -o ${cache}/bin/kerl https://raw.githubusercontent.com/spawngrid/kerl/master/kerl
+chmod +x ${cache}/bin/kerl
+kerl install ${OTP_VERSION} ${ERLROOT}
 
 cd $build
 
 if [ ! -f "erlang.mk" ]; then
   echo "-----> Installing erlang.mk from https://github.com/extend/erlang.mk"
   curl -o erlang.mk https://raw.githubusercontent.com/extend/erlang.mk/master/erlang.mk
-fi
-
-if [ ! -d ${cache}/bin/ ] ; then
-  mkdir ${cache}/bin
 fi
 
 if [ ! -e ${cache}/bin/wget ] ; then
