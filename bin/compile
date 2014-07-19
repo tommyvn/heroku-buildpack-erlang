@@ -31,6 +31,8 @@ curl -o ${cache}/bin/kerl https://raw.githubusercontent.com/spawngrid/kerl/maste
 chmod +x ${cache}/bin/kerl
 MAKEFLAGS=-j8 kerl build ${OTP_VERSION} ${OTP_VERSION}
 kerl install ${OTP_VERSION} ${ERLROOT}
+# work around https://github.com/erlware/relx/issues/211
+rm ${ERLROOT}/releases/*/start_all_example.rel
 
 cd $build
 
@@ -51,7 +53,6 @@ if [ ! -e ${cache}/bin/wget ] ; then
 fi
 
 echo "-----> Building with erlang.mk"
-
 export OTPROOT=${ERLROOT}
 unset GIT_DIR
 PATH=$PATH:${cache}/bin/ make 2>&1 | sed -u 's/^/       /'
