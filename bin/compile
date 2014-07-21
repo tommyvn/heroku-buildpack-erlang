@@ -43,6 +43,7 @@ else
   ls ${ERLROOT}
   ls ${ERLROOT}/erts-6.1/bin/
   ls -l ${ERLROOT}/erts-6.1/bin/erlexec
+  echo $HOME
 fi
 
 cd $build
