@@ -27,12 +27,19 @@ PATH=$ERLROOT/bin:${cache}/bin:$PATH
 export PATH
 
 echo "-----> Using Erlang/OTP $ver"
-curl -o ${cache}/bin/kerl https://raw.githubusercontent.com/spawngrid/kerl/master/kerl
-chmod +x ${cache}/bin/kerl
-MAKEFLAGS=-j8 kerl build ${OTP_VERSION} ${OTP_VERSION}
-kerl install ${OTP_VERSION} ${ERLROOT}
-# work around https://github.com/erlware/relx/issues/211
-rm ${ERLROOT}/releases/*/start_all_example.rel
+if [ ! -d ${cache}/otp_${OTP_VERSION} ] ; then
+  echo "-----> Building Erlang/OTP $ver"
+  rm -fr ${cache}/otp_* 2>/dev/null
+  curl -o ${cache}/bin/kerl https://raw.githubusercontent.com/spawngrid/kerl/master/kerl
+  chmod +x ${cache}/bin/kerl
+  MAKEFLAGS=-j2 kerl build ${OTP_VERSION} ${OTP_VERSION}
+  kerl install ${OTP_VERSION} ${ERLROOT}
+  # work around https://github.com/erlware/relx/issues/211
+  rm ${ERLROOT}/releases/*/start_all_example.rel
+  cp -a ${ERLROOT} ${cache}/otp_${OTP_VERSION}
+else
+  cp -a ${cache}/otp_${OTP_VERSION} ${ERLROOT}
+fi
 
 cd $build
 
@@ -43,10 +50,10 @@ fi
 
 if [ ! -e ${cache}/bin/wget ] ; then
   echo "-----> wget not available, building to cache"
-  curl http://ftp.gnu.org/gnu/wget/wget-1.15.tar.gz | tar -xzf - -C /tmp/
+  curl http://ftp.gnu.org/gnu/wget/wget-1.15.tar.gz | tar -xzf - -C /tmp/wget/ --strip-components=1
   WORK_DIR=$(pwd)
-  cd /tmp/wget-1.15/
-  ./configure --with-open-ssl --with-ssl=openssl | sed -u 's/^/       /'
+  cd /tmp/wget/
+  ./configure --with-ssl=openssl | sed -u 's/^/       /'
   make | sed -u 's/^/       /'
   mv ./src/wget ${cache}/bin/wget
   cd $WORK_DIR
@@ -56,6 +63,7 @@ echo "-----> Building with erlang.mk"
 export OTPROOT=${ERLROOT}
 unset GIT_DIR
 PATH=$PATH:${cache}/bin/ make 2>&1 | sed -u 's/^/       /'
+echo
 if [ ${PIPESTATUS[0]} -ne 0 ]; then
   echo "-----> Build failed"
   ls -l $ERLROOT
@@ -65,7 +73,7 @@ fi
 if [ ! -f ./Procfile ]; then
   APP=$(ls ./_rel/)
   echo "-----> No Procfile, using web: ./_rel/$APP/bin/$APP"
-  echo "web: ./_rel/$APP/bin/$APP" > Procfile
+  echo "web: ./_rel/$APP/bin/$APP foreground" > Procfile
 fi
 
 echo "-----> Build succeeded"
