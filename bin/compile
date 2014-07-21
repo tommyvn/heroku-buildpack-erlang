@@ -39,8 +39,8 @@ if [ ! -d ${cache}/otp_${OTP_VERSION} ] ; then
   cp -a ${ERLROOT} ${cache}/otp_${OTP_VERSION}
 else
   ls ${cache}/otp_${OTP_VERSION}
-  ls ${ERLROOT}
   cp -a ${cache}/otp_${OTP_VERSION} ${ERLROOT}
+  ls ${ERLROOT}
 fi
 
 cd $build
