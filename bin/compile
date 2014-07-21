@@ -19,10 +19,8 @@ ver=${OTP_VERSION:=${DEFAULT_OTP_VERSION}}
 ERLROOT=${build}/otp
 PROFILE=${HOME}/.profile.d
 
-rm -fr ${cache}
-
 if [ ! -d ${cache}/bin/ ] ; then
-  mkdir ${cache}/bin
+  mkdir -p ${cache}/bin
 fi
 
 PATH=$ERLROOT/bin:${cache}/bin:$PATH
