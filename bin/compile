@@ -41,6 +41,8 @@ else
   ls ${cache}/otp_${OTP_VERSION}
   cp -a ${cache}/otp_${OTP_VERSION} ${ERLROOT}
   ls ${ERLROOT}
+  ls ${ERLROOT}/erts-6.1/bin/
+  ls -l ${ERLROOT}/erts-6.1/bin/erlexec
 fi
 
 cd $build
