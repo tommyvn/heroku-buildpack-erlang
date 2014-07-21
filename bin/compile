@@ -19,6 +19,8 @@ ver=${OTP_VERSION:=${DEFAULT_OTP_VERSION}}
 ERLROOT=${build}/otp
 PROFILE=${HOME}/.profile.d
 
+rm -fr ${cache}
+
 if [ ! -d ${cache}/bin/ ] ; then
   mkdir ${cache}/bin
 fi
@@ -26,24 +28,24 @@ fi
 PATH=$ERLROOT/bin:${cache}/bin:$PATH
 export PATH
 
-echo "-----> Using Erlang/OTP $ver"
-if [ ! -d ${cache}/otp_${OTP_VERSION} ] ; then
-  echo "-----> Building Erlang/OTP $ver"
-  rm -fr ${cache}/otp_* 2>/dev/null
+echo "-----> Installing Erlang/OTP $ver"
+if [ -e ${cache}/bin/kerl ] ; then
   curl -o ${cache}/bin/kerl https://raw.githubusercontent.com/spawngrid/kerl/master/kerl
   chmod +x ${cache}/bin/kerl
-  MAKEFLAGS=-j2 kerl build ${OTP_VERSION} ${OTP_VERSION}
-  kerl install ${OTP_VERSION} ${ERLROOT}
-  # work around https://github.com/erlware/relx/issues/211
-  rm ${ERLROOT}/releases/*/start_all_example.rel
-  cp -a ${ERLROOT} ${cache}/otp_${OTP_VERSION}
-else
-  ls ${cache}/otp_${OTP_VERSION}
-  cp -a ${cache}/otp_${OTP_VERSION} ${ERLROOT}
-  ls ${ERLROOT}
-  ls ${ERLROOT}/erts-6.1/bin/
-  ls -l ${ERLROOT}/erts-6.1/bin/erlexec
-  echo $HOME
+fi
+if [ ! -d ${cache}/kerl ] ; then
+  mkdir -p ${cache}/kerl
+fi
+ln -s ${cache}/kerl $HOME/.kerl
+kerl install $ver ${ERLROOT} | sed -u 's/^/       /'
+if [ ${PIPESTATUS[0]} -ne 0 ]; then
+  echo "-------> Erlang/OTP $ver not cached, building"
+  MAKEFLAGS=-j2 kerl build $ver $ver | sed -u 's/^/       /'
+  if [ ${PIPESTATUS[0]} -ne 0 ]; then
+    echo "-----> Build failed building OTP"
+    exit 1
+  fi
+  kerl install $ver ${ERLROOT} | sed -u 's/^/       /'
 fi
 
 cd $build
