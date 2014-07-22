@@ -28,22 +28,24 @@ export PATH
 
 echo "-----> Installing Erlang/OTP $ver"
 if [ -e ${cache}/bin/kerl ] ; then
-  curl -o ${cache}/bin/kerl https://raw.githubusercontent.com/spawngrid/kerl/master/kerl
+  curl -s -o ${cache}/bin/kerl https://raw.githubusercontent.com/spawngrid/kerl/master/kerl 2>&1 | sed -u 's/^/       /'
   chmod +x ${cache}/bin/kerl
 fi
 if [ ! -d ${cache}/kerl ] ; then
   mkdir -p ${cache}/kerl
 fi
 ln -s ${cache}/kerl $HOME/.kerl
-kerl install $ver ${ERLROOT} | sed -u 's/^/       /'
+kerl install $ver ${ERLROOT} 2>&1 | sed -u 's/^/       /'
 if [ ${PIPESTATUS[0]} -ne 0 ]; then
   echo "-------> Erlang/OTP $ver not cached, building"
-  MAKEFLAGS=-j2 kerl build $ver $ver | sed -u 's/^/       /'
+  MAKEFLAGS=-j2 kerl build $ver $ver 2>&1 | sed -u 's/^/       /'
   if [ ${PIPESTATUS[0]} -ne 0 ]; then
     echo "-----> Build failed building OTP"
     exit 1
   fi
-  kerl install $ver ${ERLROOT} | sed -u 's/^/       /'
+  kerl install $ver ${ERLROOT} 2>&1 | sed -u 's/^/       /'
+  # work around https://github.com/erlware/relx/issues/211
+  rm ${ERLROOT}/releases/*/start_all_example.rel
 fi
 
 cd $build
