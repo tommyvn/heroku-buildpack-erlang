@@ -30,14 +30,14 @@ fi
 DESIRED_OTP_VERSION=$(cat ${BUILD_DIR}/.preferred_otp_version)
 OTP_VERSION=${DESIRED_OTP_VERSION:=${DEFAULT_OTP_VERSION}}
 
-if [ ! -d ${cache}/bin/ ] ; then
-  mkdir -p ${cache}/bin
+if [ ! -d ${CACHE_DIR}/bin/ ] ; then
+  mkdir -p ${CACHE_DIR}/bin
 fi
-if [ ! -d ${cache}/kerl/ ] ; then
-  mkdir -p ${cache}/kerl
+if [ ! -d ${CACHE_DIR}/kerl/ ] ; then
+  mkdir -p ${CACHE_DIR}/kerl
 fi
 
-if [ ! -e ${cache}/bin/wget ] ; then
+if [ ! -e ${CACHE_DIR}/bin/wget ] ; then
   echo "-----> wget not installed"
   WORK_DIR=$(pwd)
   WGET_BUILD_DIR=$(mktemp -d)
@@ -49,16 +49,16 @@ if [ ! -e ${cache}/bin/wget ] ; then
   echo "-------> building wget"
   make >/dev/null |& sed -u 's/^/       /'
   echo "-------> installing wget"
-  mv ./src/wget ${cache}/bin/wget
+  mv ./src/wget ${CACHE_DIR}/bin/wget
   cd $WORK_DIR
 fi
 
-if [ ! -e ${cache}/bin/kerl ] ; then
+if [ ! -e ${CACHE_DIR}/bin/kerl ] ; then
   echo "-----> installing kerl from https://githubusercontent.com/spawngrid/kerl"
-  curl -s -o ${cache}/bin/kerl https://raw.githubusercontent.com/spawngrid/kerl/master/kerl |& sed -u 's/^/       /'
-  chmod +x ${cache}/bin/kerl
+  curl -s -o ${CACHE_DIR}/bin/kerl https://raw.githubusercontent.com/spawngrid/kerl/master/kerl |& sed -u 's/^/       /'
+  chmod +x ${CACHE_DIR}/bin/kerl
 fi
-ln -s ${cache}/kerl $HOME/.kerl
+ln -s ${CACHE_DIR}/kerl $HOME/.kerl
 
 echo "-----> Installing Erlang/OTP ${OTP_VERSION}"
 kerl install ${OTP_VERSION} ${ERLROOT} |& sed -u 's/^/       /'
