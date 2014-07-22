@@ -54,11 +54,17 @@ if [ ! -e ${CACHE_DIR}/bin/wget ] ; then
 fi
 
 if [ ! -e ${CACHE_DIR}/bin/kerl ] ; then
-  echo "-----> installing kerl from https://githubusercontent.com/spawngrid/kerl"
+  echo "-----> installing kerl from https://github.com/yrashk/kerl"
   curl -s -o ${CACHE_DIR}/bin/kerl https://raw.githubusercontent.com/spawngrid/kerl/master/kerl |& sed -u 's/^/       /'
   chmod +x ${CACHE_DIR}/bin/kerl
 fi
 ln -s ${CACHE_DIR}/kerl $HOME/.kerl
+
+if [ ! -e ${CACHE_DIR}/bin/rebar ] ; then
+  echo "-----> installing rebar from https://github.com/rebar/rebar"
+  curl -L -s -o ${CACHE_DIR}/bin/rebar https://github.com/rebar/rebar/wiki/rebar |& sed -u 's/^/       /'
+  chmod +x ${CACHE_DIR}/bin/rebar
+fi
 
 echo "-----> Installing Erlang/OTP ${OTP_VERSION}"
 kerl install ${OTP_VERSION} ${ERLROOT} |& sed -u 's/^/       /'
