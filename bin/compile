@@ -72,6 +72,8 @@ fi
 
 echo "-----> Building with erlang.mk"
 cd ${BUILD_DIR}
+export OTPROOT=${ERLROOT}
+unset GIT_DIR
 make |& sed -u 's/^/       /'
 echo
 
