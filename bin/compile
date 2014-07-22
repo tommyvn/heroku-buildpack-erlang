@@ -71,6 +71,7 @@ if [ ${PIPESTATUS[0]} -ne 0 ]; then
 fi
 
 echo "-----> Building with erlang.mk"
+cd ${BUILD_DIR}
 make |& sed -u 's/^/       /'
 echo
 
