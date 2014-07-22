@@ -28,7 +28,7 @@ if [ ! -f ${BUILD_DIR}/.preferred_otp_version ] ; then
 fi
 
 DESIRED_OTP_VERSION=$(cat ${BUILD_DIR}/.preferred_otp_version)
-OTP_VERSION=${$DESIRED_OTP_VERSION:=${DEFAULT_OTP_VERSION}}
+OTP_VERSION=${DESIRED_OTP_VERSION:=${DEFAULT_OTP_VERSION}}
 
 if [ ! -d ${cache}/bin/ ] ; then
   mkdir -p ${cache}/bin
