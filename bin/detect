@@ -1,6 +1,6 @@
 #!/bin/sh
 
-if [ -f $1/Makefile ]; then
+if [ -f $1/Makefile -a $1/erlang.mk ]; then
   echo "erlang.mk"
   exit 0
 else
