@@ -67,10 +67,12 @@ if [ ! -e ${CACHE_DIR}/bin/rebar ] ; then
 fi
 
 echo "-----> Installing Erlang/OTP ${OTP_VERSION}"
+echo "KERL_USE_AUTOCONF=yes" > ${HOME}/.kerlrc
 kerl install ${OTP_VERSION} ${ERLROOT} |& sed -u 's/^/       /'
 if [ ${PIPESTATUS[0]} -ne 0 ]; then
   echo "-------> Erlang/OTP ${OTP_VERSION} not cached, building"
-  KERL_CONFIGURE_OPTIONS="--with-ssl" MAKEFLAGS=-j2 kerl build ${OTP_VERSION} ${OTP_VERSION} |& sed -u 's/^/       /'
+  MAKEFLAGS=-j2 kerl build ${OTP_VERSION} ${OTP_VERSION} |& sed -u 's/^/       /'
+  #KERL_CONFIGURE_OPTIONS="--with-ssl" MAKEFLAGS=-j2 kerl build ${OTP_VERSION} ${OTP_VERSION} |& sed -u 's/^/       /'
   kerl install ${OTP_VERSION} ${ERLROOT} |& sed -u 's/^/       /'
   # work around https://github.com/erlware/relx/issues/211
   rm ${ERLROOT}/releases/*/start_all_example.rel
